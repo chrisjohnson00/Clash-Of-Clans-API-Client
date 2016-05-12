@@ -28,3 +28,7 @@ And this will setup all the dependencies required!!!
 ## To run tests
 
 You'll need to create a file in the same location as `composer.json` called `testKey.txt`, the contents should be your key/token.
+
+## Using this in your application
+
+more to come...
