@@ -10,6 +10,8 @@ namespace ChrisJohnson00\ClashOfClansAPIClient\Client;
 
 
 use Buzz\Browser;
+use ChrisJohnson00\ClashOfClansAPIClient\Entity\Location;
+use ChrisJohnson00\ClashOfClansAPIClient\Entity\Locations;
 use Doctrine\Common\Annotations\AnnotationRegistry;
 use JMS\Serializer\SerializerBuilder;
 
@@ -40,6 +42,9 @@ class ClashOfClansAPIClient
         AnnotationRegistry::registerLoader('class_exists'); //so jms annotations load automatically
     }
 
+    /**
+     * @return Locations
+     */
     public function getLocations()
     {
         $this->url = $this->getApiHost() . $this->getApiVersion() . "/locations";
@@ -47,6 +52,53 @@ class ClashOfClansAPIClient
         $message = $this->sendRequest();
 
         return $this->jms->deserialize($message->getContent(), 'ChrisJohnson00\ClashOfClansAPIClient\Entity\Locations', 'json');
+    }
+
+    /**
+     * @param $id
+     *
+     * @return Location
+     * The location by id API provided by Supercell is dumb... you get no more information than from /locations.
+     * so let's just reuse until they provide useful data by id
+     */
+    public function getLocationById($id)
+    {
+        $locations = $this->getLocations();
+        /**
+         * @var $location Location
+         */
+        foreach ($locations->getItems() as $location)
+        {
+            if ($location->getId() == $id)
+            {
+                return $location;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * @param $locationId
+     * @param $rankingId
+     *
+     * @throws \Exception
+     * @throws \BadFunctionCallException
+     */
+    public function getLocationRankings($locationId, $rankingId)
+    {
+        $validRankings = array('players', 'clans');
+        if (!in_array($rankingId, $validRankings))
+        {
+            throw new \BadFunctionCallException($rankingId . " is not a valid value, one of 'players', 'clans' is expected");
+        }
+
+        if (is_null($this->getLocationById($locationId)))
+        {
+            throw new \BadFunctionCallException($locationId . " is not a valid value for location id");
+        }
+
+        throw new \Exception("Not implemented yet... there's no sample response from the API docs to build this with");
     }
 
     /**

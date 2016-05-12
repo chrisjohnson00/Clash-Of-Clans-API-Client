@@ -100,6 +100,9 @@ class ClashOfClansAPIClientTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($expectedLocations, $locations);
     }
 
+    /**
+     * @group integration
+     */
     public function testGetLocationsIntegrationTest()
     {
         if ($this->disableIntegrationTests)
@@ -114,5 +117,102 @@ class ClashOfClansAPIClientTest extends PHPUnit_Framework_TestCase
         $this->apiClient->setBuzzClient($buzz);
         $locations = $this->apiClient->getLocations();
         $this->assertInstanceOf('ChrisJohnson00\ClashOfClansAPIClient\Entity\Locations', $locations);
+    }
+
+    public function testGetLocationsById()
+    {
+        $this->responseMock->expects($this->atLeastOnce())->method('getContent')->will($this->returnValue(json_encode(array())));
+        $this->buzzMock->expects($this->atLeastOnce())->method('get')->will($this->returnValue($this->responseMock));
+        $this->apiClient->setBuzzClient($this->buzzMock);
+
+
+        $locations = new \ChrisJohnson00\ClashOfClansAPIClient\Entity\Locations();
+        $location1 = new \ChrisJohnson00\ClashOfClansAPIClient\Entity\Location();
+        $location1->setId(32000006);
+        $location1->setName("International");
+        $location1->setIsCountry(false);
+        $locationArray[] = $location1;
+        $location2       = new \ChrisJohnson00\ClashOfClansAPIClient\Entity\Location();
+        $location2->setId(32000007);
+        $location2->setName("Afghanistan");
+        $location2->setIsCountry(true);
+        $location2->setCountryCode("AF");
+        $locationArray[] = $location2;
+        $locations->setItems($locationArray);
+
+        $this->jmsMock->expects($this->atLeastOnce())->method('deserialize')->will($this->returnValue($locations));
+        $this->apiClient->setJms($this->jmsMock);
+
+        $returnedLocation = $this->apiClient->getLocationById(32000006);
+        $this->assertEquals($location1, $returnedLocation);
+    }
+
+    /**
+     * @expectedException BadFunctionCallException
+     */
+    public function testGetLocationRankingsInvalidLocationId()
+    {
+        $this->responseMock->expects($this->atLeastOnce())->method('getContent')->will($this->returnValue(json_encode(array())));
+        $this->buzzMock->expects($this->atLeastOnce())->method('get')->will($this->returnValue($this->responseMock));
+        $this->apiClient->setBuzzClient($this->buzzMock);
+
+
+        $locations = new \ChrisJohnson00\ClashOfClansAPIClient\Entity\Locations();
+        $location1 = new \ChrisJohnson00\ClashOfClansAPIClient\Entity\Location();
+        $location1->setId(32000006);
+        $location1->setName("International");
+        $location1->setIsCountry(false);
+        $locationArray[] = $location1;
+        $location2       = new \ChrisJohnson00\ClashOfClansAPIClient\Entity\Location();
+        $location2->setId(32000007);
+        $location2->setName("Afghanistan");
+        $location2->setIsCountry(true);
+        $location2->setCountryCode("AF");
+        $locationArray[] = $location2;
+        $locations->setItems($locationArray);
+
+        $this->jmsMock->expects($this->atLeastOnce())->method('deserialize')->will($this->returnValue($locations));
+        $this->apiClient->setJms($this->jmsMock);
+
+        $this->apiClient->getLocationRankings(-1, 'players');
+    }
+
+    /**
+     * @expectedException BadFunctionCallException
+     */
+    public function testGetLocationRankingsInvalidRankingId()
+    {
+//no mocking needed since it'll never hit other code after validation
+        $this->apiClient->getLocationRankings(32000006, 'goblins');
+    }
+
+    /**
+     * @expectedException Exception
+     */
+    public function testGetLocationRankingsNotImplementedException()
+    {
+        $this->responseMock->expects($this->atLeastOnce())->method('getContent')->will($this->returnValue(json_encode(array())));
+        $this->buzzMock->expects($this->atLeastOnce())->method('get')->will($this->returnValue($this->responseMock));
+        $this->apiClient->setBuzzClient($this->buzzMock);
+
+
+        $locations = new \ChrisJohnson00\ClashOfClansAPIClient\Entity\Locations();
+        $location1 = new \ChrisJohnson00\ClashOfClansAPIClient\Entity\Location();
+        $location1->setId(32000006);
+        $location1->setName("International");
+        $location1->setIsCountry(false);
+        $locationArray[] = $location1;
+        $location2       = new \ChrisJohnson00\ClashOfClansAPIClient\Entity\Location();
+        $location2->setId(32000007);
+        $location2->setName("Afghanistan");
+        $location2->setIsCountry(true);
+        $location2->setCountryCode("AF");
+        $locationArray[] = $location2;
+        $locations->setItems($locationArray);
+
+        $this->jmsMock->expects($this->atLeastOnce())->method('deserialize')->will($this->returnValue($locations));
+        $this->apiClient->setJms($this->jmsMock);
+
+        $this->apiClient->getLocationRankings(32000006, 'players');
     }
 }
