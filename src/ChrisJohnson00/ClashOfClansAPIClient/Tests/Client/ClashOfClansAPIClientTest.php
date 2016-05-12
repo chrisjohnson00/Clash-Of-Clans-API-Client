@@ -19,14 +19,16 @@ class ClashOfClansAPIClientTest extends PHPUnit_Framework_TestCase
     private $buzzMock;
     private $responseMock;
     private $jmsMock;
+    private $disableIntegrationTests;
 
     public function setUp()
     {
-        $testKeyLocation = __DIR__ . '/../../../../../testKey.txt';
+        $this->disableIntegrationTests = false;
+        $testKeyLocation               = __DIR__ . '/../../../../../testKey.txt';
         if (!file_exists($testKeyLocation))
         {
-            throw new RuntimeException($testKeyLocation . " was not found, please create the file in the same location as composer.json");
-            die();
+            echo $testKeyLocation . " was not found, please create the file in the same location as composer.json" . PHP_EOL;
+            $this->disableIntegrationTests = true;
         }
         $this->apiKey       = file_get_contents($testKeyLocation);
         $this->apiClient    = new ClashOfClansAPIClient($this->apiKey);
@@ -96,6 +98,10 @@ class ClashOfClansAPIClientTest extends PHPUnit_Framework_TestCase
 
     public function testGetLocationsIntegrationTest()
     {
+        if ($this->disableIntegrationTests)
+        {
+            $this->markTestSkipped("Integration tests are disabled due to missing test key file");
+        }
         //reset default timeout from 5 seconds to 20
         $buzz   = $this->apiClient->getBuzzClient();
         $client = $buzz->getClient();
