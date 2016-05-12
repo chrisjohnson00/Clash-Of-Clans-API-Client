@@ -10,6 +10,8 @@ namespace ChrisJohnson00\ClashOfClansAPIClient\Client;
 
 
 use Buzz\Browser;
+use Doctrine\Common\Annotations\AnnotationRegistry;
+use JMS\Serializer\SerializerBuilder;
 
 class ClashOfClansAPIClient
 {
@@ -17,6 +19,11 @@ class ClashOfClansAPIClient
     private $apiVersion;
     private $apiToken;
     private $url;
+
+    /**
+     * @var $jms SerializerBuilder
+     */
+    private $jms;
 
     /**
      * @var $buzzClient Browser
@@ -29,13 +36,17 @@ class ClashOfClansAPIClient
         $this->setApiVersion("v1");
         $this->setApiToken($apiToken);
         $this->setBuzzClient(new Browser());
+        $this->setJms(SerializerBuilder::create()->build());
+        AnnotationRegistry::registerLoader('class_exists'); //so jms annotations load automatically
     }
 
     public function getLocations()
     {
         $this->url = $this->getApiHost() . $this->getApiVersion() . "/locations";
 
-        return $this->sendRequest();
+        $message = $this->sendRequest();
+
+        return $this->jms->deserialize($message->getContent(), 'ChrisJohnson00\ClashOfClansAPIClient\Entity\Locations', 'json');
     }
 
     /**
@@ -121,6 +132,22 @@ class ClashOfClansAPIClient
     public function getUrl()
     {
         return $this->url;
+    }
+
+    /**
+     * @return SerializerBuilder
+     */
+    public function getJms()
+    {
+        return $this->jms;
+    }
+
+    /**
+     * @param SerializerBuilder $jms
+     */
+    public function setJms($jms)
+    {
+        $this->jms = $jms;
     }
 
 }
