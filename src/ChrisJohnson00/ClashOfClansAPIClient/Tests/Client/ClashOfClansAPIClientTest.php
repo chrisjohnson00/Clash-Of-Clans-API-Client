@@ -29,8 +29,12 @@ class ClashOfClansAPIClientTest extends PHPUnit_Framework_TestCase
         {
             echo $testKeyLocation . " was not found, please create the file in the same location as composer.json" . PHP_EOL;
             $this->disableIntegrationTests = true;
+            $this->apiKey                  = "sadYouCantCallTheRealAPI";
         }
-        $this->apiKey       = file_get_contents($testKeyLocation);
+        else
+        {
+            $this->apiKey = file_get_contents($testKeyLocation);
+        }
         $this->apiClient    = new ClashOfClansAPIClient($this->apiKey);
         $this->buzzMock     = $this->getMockBuilder('Buzz\Browser')->setMethods(array('get'))->getMock();
         $this->responseMock = $this->getMockBuilder('Buzz\Message')->setMethods(array('getContent'))->getMock();
