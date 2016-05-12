@@ -9,7 +9,7 @@
   },
   "target-dir": "ChrisJohnson00/ClashOfClansAPIClient",
   "require": {
-    "php": ">=5.3.0",
+    "php": ">=5.4.0",
     "kriswallsmith/buzz": "0.10",
     "monolog/monolog": "1.6.0",
     "jms/serializer": "^1.1"
