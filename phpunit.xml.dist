@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<phpunit bootstrap="./src/ChrisJohnson00/ClashOfClansAPIClient/Tests/bootstrap.php" colors="true">
+
+    <testsuites>
+        <testsuite name="ClashOfClansAPIClient test suite">
+            <directory suffix="Test.php">./src/ChrisJohnson00/ClashOfClansAPIClient/Tests</directory>
+        </testsuite>
+    </testsuites>
+
+    <filter>
+        <whitelist>
+            <directory>./</directory>
+            <exclude>
+                <directory>./Resources</directory>
+                <directory>./Tests</directory>
+                <directory>./vendor</directory>
+            </exclude>
+        </whitelist>
+    </filter>
+</phpunit>

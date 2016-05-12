@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-##apt-get update
+apt-get update
 
 ### install software
 apt-get install -yf php5-dev php5-json php5-cli php5-curl
@@ -13,10 +13,9 @@ fi
 if [ ! -d "/home/vagrant/.composer" ]; then
   mkdir /home/vagrant/.composer
   chown -R vagrant:vagrant /home/vagrant/.composer
+fi
   oauthToken=$(</vagrant/github-oauth-token.txt)
   composer config -g github-oauth.github.com $oauthToken
-fi
-
 
 ## install phpunit 4.8
 if [ ! -f /usr/local/bin/phpunit ]; then
